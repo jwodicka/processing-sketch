@@ -1,30 +1,35 @@
-PImage photo;
-PImage photo2;
 PImage canvas;
 PImage target;
 
+// Images in the directory we can use
+final String COLORS = "colors.jpg";
+final String DOGGO = "doggo.jpg";
+final String HOUSE = "gingerbread.jpg";
+
 void setup() {
   size(800, 600);
+  
+  PImage source = loadImage(COLORS, "jpg");
+  PImage dest = loadImage(HOUSE, "jpg");
 
-  photo2 = loadImage("colors.jpg", "jpg");
-  //photo = loadImage("doggo.jpg", "jpg");
-  photo = photo2;
   canvas = createImage(width, height, RGB);
   target = createImage(width, height, RGB);
   
-  canvas.copy(photo, 0, 0, photo.width, photo.height, 0, 0, width, height);
-  target.copy(photo2, 0, 0, photo2.width, photo2.height, 0, 0, width, height);
+  canvas.copy(source, 0, 0, source.width, source.height, 0, 0, width, height);
+  target.copy(dest, 0, 0, dest.width, dest.height, 0, 0, width, height);
   target.loadPixels();
-  
-  image(target, 0, 0, width, height);
-  
-  thread("bubbleSort");
+    
+  //thread("bubbleSort");
   //thread("rateLimitedBubbleSort");
   //thread("randomSort");
   //thread("randomTransfer");
   //thread("randomTransferNaive");
-  //thread("randomTransferSquare");
-  thread("rateLimitedRandomTransferSquare");
+  thread("randomTransferSquare");
+  //thread("rateLimitedRandomTransferSquare");
+}
+
+void draw() {
+  image(canvas, 0, 0, width, height);
 }
 
 void bubbleSort() {
@@ -164,7 +169,7 @@ void randomTransferNaive() {
       float currDelta = abs(aCVal - aTVal) + abs(bCVal - bTVal);
       float swapDelta = abs(aCVal - bTVal) + abs(bCVal - aTVal);
       
-      if (swapDelta > currDelta) {
+      if (swapDelta < currDelta) {
         swap(canvas, a, b);
         swaps++;
       }
@@ -261,8 +266,4 @@ int rgbSquareDelta(color a, color b) {
  int gD = ceil(pow(green(a) - green(b), 2));
  int bD = ceil(pow(blue(a) - blue(b), 2));
  return rD + gD + bD;
-}
-
-void draw() {
-  image(canvas, 0, 0, width, height);
 }
