@@ -14,8 +14,9 @@ final String BRIGHT = "rainbow-dust.jpg";
 void setup() {
   size(800, 600);
   
-  PImage source = loadImage(BRIGHT, "jpg");
-  PImage dest = loadImage(COLORS, "jpg");
+  //PImage source = loadImage(FOX, "jpg");
+  PImage source = loadImage("SMPTE-Color-Bars.png", "png");
+  PImage dest = loadImage(DOGGO, "jpg");
 
   canvas = createImage(width, height, RGB);
   target = createImage(width, height, RGB);
