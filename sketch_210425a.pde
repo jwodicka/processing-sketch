@@ -5,12 +5,17 @@ PImage target;
 final String COLORS = "colors.jpg";
 final String DOGGO = "doggo.jpg";
 final String HOUSE = "gingerbread.jpg";
+final String ORANGEMTN = "orange-mtns.jpg";
+final String PINKMTN = "pink-mtns.jpg";
+final String FOX = "arctic-fox.jpg";
+final String COUNTDOWN = "liftoff-launch.jpg";
+final String BRIGHT = "rainbow-dust.jpg";
 
 void setup() {
   size(800, 600);
   
-  PImage source = loadImage(COLORS, "jpg");
-  PImage dest = loadImage(HOUSE, "jpg");
+  PImage source = loadImage(BRIGHT, "jpg");
+  PImage dest = loadImage(COLORS, "jpg");
 
   canvas = createImage(width, height, RGB);
   target = createImage(width, height, RGB);
@@ -19,47 +24,67 @@ void setup() {
   target.copy(dest, 0, 0, dest.width, dest.height, 0, 0, width, height);
   target.loadPixels();
     
+  //bubbleSortCanvas = target;
   //thread("bubbleSort");
   //thread("rateLimitedBubbleSort");
+  
   //thread("randomSort");
   //thread("randomTransfer");
   //thread("randomTransferNaive");
-  thread("randomTransferSquare");
+  
+  randomTransferCanvas = canvas;
+  randomTransferTarget = target;
+  //thread("randomTransferSquare");
+  //thread("randomTransferSBSquare");
+  thread("randomTransferHSBSquare");
+
   //thread("rateLimitedRandomTransferSquare");
 }
 
+boolean noSwap = true;
+
 void draw() {
-  image(canvas, 0, 0, width, height);
+  if (noSwap || frameCount % 120 > 60) {
+    image(canvas, 0, 0, width, height);
+  } else {
+    image(target, 0, 0, width, height);
+  }
 }
 
+PImage bubbleSortCanvas;
 void bubbleSort() {
   while(true) {
-    canvas.loadPixels();
+    bubbleSortCanvas.loadPixels();
     
-    for(int j = 1; j < canvas.pixels.length; j++) {
+    for(int j = 1; j < bubbleSortCanvas.pixels.length; j++) {
       int i = j - 1;
-      if (canvas.pixels[i] > canvas.pixels[j]) {
-        swap(canvas, i, j);
+      if (bubbleSortCanvas.pixels[i] > bubbleSortCanvas.pixels[j]) {
+        swap(bubbleSortCanvas, i, j);
       }
     }
-    canvas.updatePixels();
+    bubbleSortCanvas.updatePixels();
   }
 }
 
 void rateLimitedBubbleSort() {
   int frame = 0;
   while(true) {
+    // Remove this. I dare you. Just... test the code afterward, because
+    // right now, if this isn't here this thread never runs.
+    // I don't know why either. If you figure it out, let me know.
+    print("");
     if (frameCount > frame) {
       frame = frameCount;
-      canvas.loadPixels();
+      bubbleSortCanvas.loadPixels();
       
-      for(int j = 1; j < canvas.pixels.length; j++) {
+      for(int j = 1; j < bubbleSortCanvas.pixels.length; j++) {
         int i = j - 1;
-        if (canvas.pixels[i] > canvas.pixels[j]) {
-          swap(canvas, i, j);
+        if (bubbleSortCanvas.pixels[i] > bubbleSortCanvas.pixels[j]) {
+          swap(bubbleSortCanvas, i, j);
         }
       }
-      canvas.updatePixels();
+      bubbleSortCanvas.updatePixels();
+      print('.');
     }
   }
 }
@@ -111,8 +136,9 @@ void randomSort() {
   }
 }
 
-// This is not actually randomTransfer. Apply it with source = target to see what I mean.
-// What _is_ this?
+PImage randomTransferCanvas;
+PImage randomTransferTarget;
+
 void randomTransfer() {
   IntList indices = new IntList();
   for (int i = 0; i < canvas.pixels.length; i++) {
@@ -181,34 +207,103 @@ void randomTransferNaive() {
 
 void randomTransferSquare() {
   IntList indices = new IntList();
-  for (int i = 0; i < canvas.pixels.length; i++) {
+  randomTransferCanvas.loadPixels();
+  for (int i = 0; i < randomTransferCanvas.pixels.length; i++) {
     indices.append(i);
   }
   int totalSwaps = 0;
   while(true) {
     indices.shuffle();
-    canvas.loadPixels();
+    randomTransferCanvas.loadPixels();
     int swaps = 0;
-    for(int a = 0; a < canvas.pixels.length; a++) {
+    for(int a = 0; a < randomTransferCanvas.pixels.length; a++) {
       int b = indices.get(a);
       
-      color aCVal = canvas.pixels[a];
-      color bCVal = canvas.pixels[b];
+      color aCVal = randomTransferCanvas.pixels[a];
+      color bCVal = randomTransferCanvas.pixels[b];
       
-      color aTVal = target.pixels[a];
-      color bTVal = target.pixels[b];
+      color aTVal = randomTransferTarget.pixels[a];
+      color bTVal = randomTransferTarget.pixels[b];
       
       int currDelta = rgbSquareDelta(aCVal, aTVal) + rgbSquareDelta(bCVal, bTVal);
       int swapDelta = rgbSquareDelta(aCVal, bTVal) + rgbSquareDelta(bCVal, aTVal);
       
       if (swapDelta < currDelta) {
-        swap(canvas, a, b);
+        swap(randomTransferCanvas, a, b);
         swaps++;
       }
     }
-    canvas.updatePixels();
+    randomTransferCanvas.updatePixels();
     totalSwaps += swaps;
-    println(swaps, totalSwaps);
+    //println(swaps, totalSwaps);
+  }
+}
+
+void randomTransferSBSquare() {
+  IntList indices = new IntList();
+  randomTransferCanvas.loadPixels();
+  for (int i = 0; i < randomTransferCanvas.pixels.length; i++) {
+    indices.append(i);
+  }
+  int totalSwaps = 0;
+  while(true) {
+    indices.shuffle();
+    randomTransferCanvas.loadPixels();
+    int swaps = 0;
+    for(int a = 0; a < randomTransferCanvas.pixels.length; a++) {
+      int b = indices.get(a);
+      
+      color aCVal = randomTransferCanvas.pixels[a];
+      color bCVal = randomTransferCanvas.pixels[b];
+      
+      color aTVal = randomTransferTarget.pixels[a];
+      color bTVal = randomTransferTarget.pixels[b];
+      
+      float currDelta = sbSquareDelta(aCVal, aTVal) + sbSquareDelta(bCVal, bTVal);
+      float swapDelta = sbSquareDelta(aCVal, bTVal) + sbSquareDelta(bCVal, aTVal);
+      
+      if (swapDelta < currDelta) {
+        swap(randomTransferCanvas, a, b);
+        swaps++;
+      }
+    }
+    randomTransferCanvas.updatePixels();
+    totalSwaps += swaps;
+    //println(swaps, totalSwaps);
+  }
+}
+
+void randomTransferHSBSquare() {
+  IntList indices = new IntList();
+  randomTransferCanvas.loadPixels();
+  for (int i = 0; i < randomTransferCanvas.pixels.length; i++) {
+    indices.append(i);
+  }
+  int totalSwaps = 0;
+  while(true) {
+    indices.shuffle();
+    randomTransferCanvas.loadPixels();
+    int swaps = 0;
+    for(int a = 0; a < randomTransferCanvas.pixels.length; a++) {
+      int b = indices.get(a);
+      
+      color aCVal = randomTransferCanvas.pixels[a];
+      color bCVal = randomTransferCanvas.pixels[b];
+      
+      color aTVal = randomTransferTarget.pixels[a];
+      color bTVal = randomTransferTarget.pixels[b];
+      
+      float currDelta = hsbSquareDelta(aCVal, aTVal) + hsbSquareDelta(bCVal, bTVal);
+      float swapDelta = hsbSquareDelta(aCVal, bTVal) + hsbSquareDelta(bCVal, aTVal);
+      
+      if (swapDelta < currDelta) {
+        swap(randomTransferCanvas, a, b);
+        swaps++;
+      }
+    }
+    randomTransferCanvas.updatePixels();
+    totalSwaps += swaps;
+    //println(swaps, totalSwaps);
   }
 }
 
@@ -262,8 +357,24 @@ float rgbTotal(color c) {
 }
 
 int rgbSquareDelta(color a, color b) {
- int rD = ceil(pow(red(a) - red(b), 2));
- int gD = ceil(pow(green(a) - green(b), 2));
- int bD = ceil(pow(blue(a) - blue(b), 2));
- return rD + gD + bD;
+  int rD = ceil(pow(red(a) - red(b), 2));
+  int gD = ceil(pow(green(a) - green(b), 2));
+  int bD = ceil(pow(blue(a) - blue(b), 2));
+  return rD + gD + bD;
+}
+
+float maxHue = 0;
+float sbSquareDelta(color a, color b) {
+  float sD = pow(saturation(a) - saturation(b), 2);
+  float bD = pow(brightness(a) - brightness(b), 2);
+  return sD + bD;
+}
+
+float hsbSquareDelta(color a, color b) {
+  // Hue appears to be in the range 0-255 by default
+  float hD = abs(hue(a) - hue(b));
+  hD = pow(min(hD, 255.0 - hD), 2);
+  float sD = pow(saturation(a) - saturation(b), 2);
+  float bD = pow(brightness(a) - brightness(b), 2);
+  return hD + sD + bD;
 }
