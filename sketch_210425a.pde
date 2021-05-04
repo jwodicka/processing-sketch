@@ -27,12 +27,14 @@ void setup() {
   target = createImage(width, height, RGB);
  
   drawCanvases.add(canvas);
-  drawCanvases.add(target);
+  //drawCanvases.add(target);
   
   canvas.copy(source, 0, 0, source.width, source.height, 0, 0, width, height);
   target.copy(dest, 0, 0, dest.width, dest.height, 0, 0, width, height);
   target.loadPixels();
-    
+  
+  new BubbleSortThread(canvas).start();
+  
   //bubbleSortCanvas = target;
   //thread("bubbleSort");
   //thread("rateLimitedBubbleSort");
@@ -45,7 +47,7 @@ void setup() {
   randomTransferTarget = target;
   //thread("randomTransferSquare");
   //thread("randomTransferSBSquare");
-  thread("randomTransferHSBSquare");
+  //thread("randomTransferHSBSquare");
 
   //thread("rateLimitedRandomTransferSquare");
 }
