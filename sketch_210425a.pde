@@ -11,6 +11,11 @@ final String FOX = "arctic-fox.jpg";
 final String COUNTDOWN = "liftoff-launch.jpg";
 final String BRIGHT = "rainbow-dust.jpg";
 
+// Canvases added to this list will be iterated through while drawing.
+ArrayList<PImage> drawCanvases = new ArrayList();
+// How many frames to draw each canvas before moving to the next.
+int drawDuration = 60;
+
 void setup() {
   size(800, 600);
   
@@ -20,6 +25,9 @@ void setup() {
 
   canvas = createImage(width, height, RGB);
   target = createImage(width, height, RGB);
+ 
+  drawCanvases.add(canvas);
+  drawCanvases.add(target);
   
   canvas.copy(source, 0, 0, source.width, source.height, 0, 0, width, height);
   target.copy(dest, 0, 0, dest.width, dest.height, 0, 0, width, height);
@@ -42,13 +50,11 @@ void setup() {
   //thread("rateLimitedRandomTransferSquare");
 }
 
-boolean noSwap = true;
-
 void draw() {
-  if (noSwap || frameCount % 120 > 60) {
-    image(canvas, 0, 0, width, height);
-  } else {
-    image(target, 0, 0, width, height);
+  if(drawCanvases.size() > 0) {
+    int cycleLength = drawDuration * drawCanvases.size();
+    int currentCanvas = (frameCount % cycleLength) / drawDuration;
+    image(drawCanvases.get(currentCanvas), 0, 0, width, height);
   }
 }
 
