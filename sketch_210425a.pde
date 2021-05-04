@@ -19,7 +19,7 @@ int drawDuration = 60;
 void setup() {
   size(800, 600);
   
-  //PImage source = loadImage(FOX, "jpg");
+  //PImage source = loadImage(BRIGHT, "jpg");
   PImage source = loadImage("SMPTE-Color-Bars.png", "png");
   PImage dest = loadImage(DOGGO, "jpg");
 
@@ -34,9 +34,8 @@ void setup() {
   target.loadPixels();
   
   new BubbleSortThread(canvas).start();
+  new RandomSortThread(canvas).start();
   
-  //bubbleSortCanvas = target;
-  //thread("bubbleSort");
   //thread("rateLimitedBubbleSort");
   
   //thread("randomSort");
@@ -61,20 +60,6 @@ void draw() {
 }
 
 PImage bubbleSortCanvas;
-void bubbleSort() {
-  while(true) {
-    bubbleSortCanvas.loadPixels();
-    
-    for(int j = 1; j < bubbleSortCanvas.pixels.length; j++) {
-      int i = j - 1;
-      if (bubbleSortCanvas.pixels[i] > bubbleSortCanvas.pixels[j]) {
-        swap(bubbleSortCanvas, i, j);
-      }
-    }
-    bubbleSortCanvas.updatePixels();
-  }
-}
-
 void rateLimitedBubbleSort() {
   int frame = 0;
   while(true) {
@@ -116,32 +101,6 @@ void bubbleSortV2() {
     }
     canvas.updatePixels();
     println(swaps);
-  }
-}
-
-void randomSort() {
-  IntList indices = new IntList();
-  for (int i = 0; i < canvas.pixels.length; i++) {
-    indices.append(i);
-  }
-  
-  while(true) {
-    indices.shuffle();
-    canvas.loadPixels();
-    for(int a = 0; a < canvas.pixels.length; a++) {
-      int b = indices.get(a);
-      
-      int i = Math.min(a, b);
-      int j = Math.max(a, b);
-      
-      float iVal = rgbTotal(canvas.pixels[i]);
-      float jVal = rgbTotal(canvas.pixels[j]);
-      
-      if (iVal > jVal) {
-        swap(canvas, i, j);
-      }
-    }
-    canvas.updatePixels();
   }
 }
 
