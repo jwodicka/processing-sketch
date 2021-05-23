@@ -10,6 +10,7 @@ final String PINKMTN = "pink-mtns.jpg";
 final String FOX = "arctic-fox.jpg";
 final String COUNTDOWN = "liftoff-launch.jpg";
 final String BRIGHT = "rainbow-dust.jpg";
+final String COLORBARS = "SMPTE-Color-Bars.png";
 
 // Canvases added to this list will be iterated through while drawing.
 ArrayList<PImage> drawCanvases = new ArrayList();
@@ -19,22 +20,24 @@ int drawDuration = 60;
 void setup() {
   size(800, 600);
   
-  //PImage source = loadImage(BRIGHT, "jpg");
-  PImage source = loadImage("SMPTE-Color-Bars.png", "png");
-  PImage dest = loadImage(DOGGO, "jpg");
+  PImage source = loadImage(BRIGHT);
+  //PImage dest = loadImage(DOGGO);
 
   canvas = createImage(width, height, RGB);
   target = createImage(width, height, RGB);
+  
+  //PImage reorderedCanvas = new ReversedImage(canvas);
+  PImage reorderedCanvas = new LUTReorderedImage(canvas, TRANSPOSED_LUT(canvas.width, canvas.height));
  
   drawCanvases.add(canvas);
   //drawCanvases.add(target);
   
   canvas.copy(source, 0, 0, source.width, source.height, 0, 0, width, height);
-  target.copy(dest, 0, 0, dest.width, dest.height, 0, 0, width, height);
-  target.loadPixels();
+  //target.copy(dest, 0, 0, dest.width, dest.height, 0, 0, width, height);
+  //target.loadPixels();
   
-  new BubbleSortThread(canvas).start();
-  new RandomSortThread(canvas).start();
+  new BubbleSortThread(reorderedCanvas).start();
+  //new RandomSortThread(reorderedCanvas).start();
   
   //thread("rateLimitedBubbleSort");
   
@@ -42,8 +45,8 @@ void setup() {
   //thread("randomTransfer");
   //thread("randomTransferNaive");
   
-  randomTransferCanvas = canvas;
-  randomTransferTarget = target;
+  //randomTransferCanvas = canvas;
+  //randomTransferTarget = target;
   //thread("randomTransferSquare");
   //thread("randomTransferSBSquare");
   //thread("randomTransferHSBSquare");
