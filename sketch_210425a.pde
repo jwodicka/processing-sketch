@@ -36,8 +36,10 @@ void setup() {
   //target.copy(dest, 0, 0, dest.width, dest.height, 0, 0, width, height);
   //target.loadPixels();
   
-  new BubbleSortThread(reorderedCanvas).start();
-  //new RandomSortThread(reorderedCanvas).start();
+  //new BubbleSortThread(canvas).start();
+  //new RandomSortThread(canvas).start();
+  //new Sort2DThread(canvas).start();
+  new DistantSort2DThread(canvas).start();
   
   //thread("rateLimitedBubbleSort");
   
