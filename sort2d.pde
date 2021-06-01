@@ -79,6 +79,8 @@ class DistantSort2DThread extends ProcessorThread {
     int width = canvas.width;
     int height = canvas.height;
     
+    int swaps = 0;
+    
     IntList indices = new IntList();
     for (int i = 0; i < this.canvas.pixels.length; i++) {
       indices.append(i);
@@ -108,11 +110,13 @@ class DistantSort2DThread extends ProcessorThread {
           if (rowA < rowB) {
             if (brightness(cA) > brightness(cB)) {
               swap(this.canvas, a, b);
+              swaps++;
               done = false;
             }
           } else {
             if (brightness(cA) < brightness(cB)) {
               swap(this.canvas, a, b);
+              swaps++;
               done = false;
             }
           }
@@ -120,11 +124,13 @@ class DistantSort2DThread extends ProcessorThread {
           if (colA < colB) {
             if (hue(cA) > hue(cB)) {
               swap(this.canvas, a, b);
+              swaps++;
               done = false;
             }
           } else {
             if (hue(cA) < hue(cB)) {
               swap(this.canvas, a, b);
+              swaps++;
               done = false;
             }
           }
@@ -132,6 +138,10 @@ class DistantSort2DThread extends ProcessorThread {
       }
 
       this.canvas.updatePixels();
+      
+      if (swaps > this.canvas.pixels.length * 10) {
+        done = true; 
+      }
     }
     println("Done sorting!");
   }

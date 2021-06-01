@@ -7,7 +7,6 @@ abstract class ReorderedImage extends PImage {
   }
   
   public void loadPixels() {
-    System.out.println("Loading pixels in ReorderedImage");
     base.loadPixels();
     this.pixels = transform(base.pixels);
   }
